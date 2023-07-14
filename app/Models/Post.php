@@ -2,70 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\File;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Post
+class Post extends Model
 {
-    public string $title;
-    public string $excerpt;
-    public $date;
-    public string $slug;
-    public string $body;
+    use HasFactory;
 
-    /**
-     * @param $title
-     * @param $excerpt
-     * @param $date
-     * @param $slug
-     * @param $body
-     */
-    public function __construct($title, $excerpt, $date, $slug, $body)
+    protected $guarded = [
+        'id',
+    ];
+
+    protected $with = [
+        'category',
+        'author'
+    ];
+
+    public function scopeFilter($query, array $filters): void
     {
-        $this->title = $title;
-        $this->excerpt = $excerpt;
-        $this->date = $date;
-        $this->slug = $slug;
-        $this->body = $body;
+        $query->when($filters['search'] ?? false, fn($query, $search) => $query
+            ->where('title', 'like', '%' . $search . '%')
+            ->orWhere('body', 'like', '%' . $search . '%'));
+
+        $query->when($filters['category'] ?? false, fn($query, $category) => $query
+            ->whereHas('category', fn($query) => $query
+                ->where('slug', $category)));
     }
 
-    /**
-     * @param $slug
-     * @return mixed
-     */
-    public static function findOrFail($slug): mixed
+    public function category(): BelongsTo
     {
-        $post = static::find($slug);
-
-        if (!$post) {
-            throw new ModelNotFoundException();
-        }
-
-        return $post;
+        return $this->belongsTo(Category::class);
     }
 
-    /**
-     * @param $slug
-     * @return mixed
-     */
-    public static function find($slug): mixed
+    public function author(): BelongsTo
     {
-        return static::all()->firstWhere('slug', $slug);
-    }
-
-    public static function all(): mixed
-    {
-        return cache()->rememberForever('posts.all',
-            fn() => collect(File::files(resource_path("posts")))
-                ->map(fn($file) => YamlFrontMatter::parseFile($file))
-                ->map(fn($document) => new Post(
-                    $document->title,
-                    $document->excerpt,
-                    $document->date,
-                    $document->slug,
-                    $document->body()
-                ))
-                ->sortByDesc('date'));
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
