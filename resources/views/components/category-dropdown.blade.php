@@ -9,11 +9,11 @@
         </button>
     </x-slot:trigger>
 
-    <x-dropdown-link href='/' :active="request()->routeIs('home')">All</x-dropdown-link>
+    <x-dropdown-link href='/' :active="!isset($currentCategory)">All</x-dropdown-link>
 
     @foreach($categories as $category)
-        <x-dropdown-link href="?category={{ $category->slug }}"
-                         :active='request()->is("?category={$category->slug}")'
+        <x-dropdown-link href="/?category={{ $category->slug }}&{{ http_build_query(request()->except('category')) }}"
+                         :active="$category->is($currentCategory)"
         >
             {{  ucwords($category->name) }}
         </x-dropdown-link>

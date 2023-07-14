@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
             'slug' => 'hobbies',
         ]);
         Category::create([
-            'name' => 'Web Development',
-            'slug' => 'web Development',
+            'name' => 'Web',
+            'slug' => 'web',
         ]);
         Category::create([
             'name' => 'Travel',
