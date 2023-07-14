@@ -32,7 +32,7 @@
 
             </div>
 
-            <footer class="flex justify-between items-center mt-8">
+            <footer class="flex justify-between items-center">
                 <div class="flex items-center text-sm">
                     <img src="/images/lary-avatar.svg" alt="Lary avatar">
                     <div class="ml-3">
