@@ -1,6 +1,8 @@
 <?php
 
-use App\Models\Post;
+use App\Http\Controllers\PostController;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -13,17 +15,12 @@ use Illuminate\Support\Facades\Route;
  *
  */
 
-Route::get('/', function () {
+Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('posts/{post:slug}', [PostController::class, 'show'])->name('post');
+
+Route::get('authors/{author:username}', function (User $author) {
     return view('posts', [
-        'posts' => Post::all()
+        'posts' => $author->posts,
+        'categories' => Category::all()
     ]);
-});
-
-
-Route::get('posts/{post}', function ($slug) {
-    /** Find a post by its slug and pass it to a view called "post" */
-    return view('post', [
-        'post' => Post::findOrFail($slug)
-    ]);
-});
-
+})->name('author');
