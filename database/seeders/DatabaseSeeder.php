@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Database\Seeder;
 
@@ -15,6 +16,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Post::factory(100)->create();
+
+        Comment::factory(200)->create();
+
         Category::create([
             'name' => 'Personal',
             'slug' => 'personal'

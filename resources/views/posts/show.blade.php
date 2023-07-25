@@ -47,6 +47,40 @@
                         {!! $post->body !!}
                     </div>
                 </div>
+
+                <section class="col-span-8 col-start-5 mt-10 space-y-6">
+                    @if(auth()->user())
+                        <x-panel>
+                            <form action="/posts/{{ $post->slug }}/comment" method="POST">
+                                @csrf
+                                <header class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/60?u={{ auth()->id() }}" alt="avatar" width="40"
+                                         height="40" class="rounded-full">
+
+                                    <h2>Join the chat!</h2>
+                                </header>
+
+                                <div class="mt-6">
+                                    <label for="body"></label><textarea name="body" id="body" cols="30" rows="5"
+                                                                        class="text-sm w-full"
+                                                                        placeholder="Keep it clean!"
+                                                                        required></textarea>
+                                </div>
+
+                                <div class="flex justify-end border-t-gray-400 pt-4">
+                                    <button type="submit"
+                                            class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600">
+                                        Post
+                                    </button>
+                                </div>
+                            </form>
+                        </x-panel>
+                    @endif
+
+                    @foreach($post->comments as $comment)
+                        <x-post-comment :comment="$comment"/>
+                    @endforeach
+                </section>
             </article>
         </main>
     </section>
